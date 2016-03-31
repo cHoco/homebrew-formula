@@ -108,7 +108,7 @@ class Neovim < Formula
 
   patch do
     url "https://patch-diff.githubusercontent.com/raw/neovim/neovim/pull/4083.diff"
-    sha256 "20bf99d1025395a1fb6463670a22cd837fb73f150e922fff8b1ab2aea2c515e8"
+    sha256 "0b46888c87854d25e96047e31b2660a85b3748c2eedd14b614c63dc2e56bf254"
   end
 
   def install
