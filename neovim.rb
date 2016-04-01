@@ -106,11 +106,6 @@ class Neovim < Formula
     sha256 "cda69953c81120cd4a1775c029e53acfd892450234c7ebd140b4125a2281072d"
   end
 
-  patch do
-    url "https://patch-diff.githubusercontent.com/raw/neovim/neovim/pull/4083.diff"
-    sha256 "0b46888c87854d25e96047e31b2660a85b3748c2eedd14b614c63dc2e56bf254"
-  end
-
   def install
     ENV.deparallelize
     ENV["HOME"] = buildpath
