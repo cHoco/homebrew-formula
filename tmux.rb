@@ -40,8 +40,8 @@ class Tmux < Formula
     patch do
       # This patch replaces wcwidth system function call to use utf8proc wcwidth
       # since OS X wcwidth implementation is broken
-      url "https://gist.github.com/cHoco/50cf6f2f281e9b5cce235b06df896a90/raw"
-      sha256 "0a6a781e7794725cdd5310be461240adb4f17e3ed10ba5cabc2517675186e177"
+      url "https://gist.githubusercontent.com/cHoco/1943f75f30995a878c1afa91dd07a1f1/raw/8ca238d3b1846036d17f95b5a632f8d25004fdbf/tmux-wcwidth.patch"
+      sha256 "a336b069583f9e87d4e43f8a32a875349f63fd80e8a715aa82a235516dcfff00"
     end
   end
 
