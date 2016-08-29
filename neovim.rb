@@ -2,11 +2,9 @@ class Neovim < Formula
   desc "Ambitious Vim-fork focused on extensibility and agility"
   homepage "https://neovim.io"
 
-  option "with-release", "Compile in release mode"
-
   stable do
-    url "https://github.com/neovim/neovim/archive/v0.1.2.tar.gz"
-    sha256 "549881465eff82454660ae92d857d6ffa22383d45c94c46f3753fd1b0e699247"
+    url "https://github.com/neovim/neovim/archive/v0.1.5.tar.gz"
+    sha256 "f286ff7994ef1835272285425d65804063f112c91925fee3ef8865282a6d2b7e"
 
     # Third-party dependencies for latest release.
     resource "libuv" do
@@ -59,6 +57,11 @@ class Neovim < Formula
       sha256 "906e1a5c673c95cb261adeacdb7308a65b4a8f7c9c50d85f3021364951fa9cde"
     end
 
+    resource "luv" do
+      url "https://github.com/luvit/luv/archive/146f1ce4c08c3b67f604c9ee1e124b1cf5c15cf3.tar.gz"
+      sha256 "3d537f8eb9fa5adb146a083eae22af886aee324ec268e2aa0fa75f2f1c52ca7a"
+    end
+
     resource "msgpack" do
       url "https://github.com/msgpack/msgpack-c/archive/cpp-1.0.0.tar.gz"
       sha256 "afda64ca445203bb7092372b822bae8b2539fdcebbfc3f753f393628c2bcfe7d"
@@ -95,17 +98,19 @@ class Neovim < Formula
     end
   end
 
+  option "with-release", "Compile in release mode"
+
   depends_on "cmake" => :build
   depends_on "libtool" => :build
   depends_on "automake" => :build
   depends_on "autoconf" => :build
   depends_on "pkg-config" => :build
-  depends_on "gettext" => :build
-  depends_on :python => :recommended if MacOS.version <= :snow_leopard
+  depends_on "gettext"
+  depends_on :python => :recommended if OS.mac? and MacOS.version <= :snow_leopard
 
   patch do
-    url "https://gist.githubusercontent.com/cHoco/5b019ead688af1a6f270/raw/121387b6cd772bf93dafcbae66b9bd9e52d79b3c/fix_tabline_redraw2.diff"
-    sha256 "cda69953c81120cd4a1775c029e53acfd892450234c7ebd140b4125a2281072d"
+    url "https://gist.githubusercontent.com/cHoco/facbfbf7b4912a5eb512102bac6b4c64/raw/4d7f4707093831c32d13da2bcdd4c8d6e83836ac/fix_tabline_redraw.patch"
+    sha256 "23f2416ca056b206fc17cc6ca027a1969217464d42e3b118f6c2310bf6321bd6"
   end
 
   def install
@@ -119,7 +124,8 @@ class Neovim < Formula
     cd "deps-build" do
       ohai "Building third-party dependencies."
       system "cmake", "../third-party", "-DUSE_BUNDLED_BUSTED=OFF",
-             "-DUSE_BUNDLED_LUV=OFF", "-DUSE_EXISTING_SRC_DIR=ON", *std_cmake_args
+             "-DUSE_BUNDLED_LUV=OFF", "-DUSE_EXISTING_SRC_DIR=ON",
+             *std_cmake_args
       system "make", "VERBOSE=1"
     end
 
@@ -134,11 +140,11 @@ class Neovim < Formula
         end
       cmake_args = std_cmake_args + ["-DDEPS_PREFIX=../deps-build/usr",
                                      "-DCMAKE_BUILD_TYPE=#{build_type}"]
-      unless build.head?
-        cmake_args += ["-DCMAKE_C_FLAGS_RELWITHDEBINFO='-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1'"]
-      end
-
       if OS.mac?
+        unless build.head?
+          cmake_args += ["-DCMAKE_C_FLAGS_#{build_type.upcase}='-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1'"]
+        end
+
         cmake_args += ["-DIconv_INCLUDE_DIRS:PATH=/usr/include",
                        "-DIconv_LIBRARIES:PATH=/usr/lib/libiconv.dylib"]
       end
@@ -161,9 +167,8 @@ class Neovim < Formula
       If you want support for Python plugins such as YouCompleteMe, you need
       to install a Python module in addition to Neovim itself.
 
-      Execute ':help nvim-python' in nvim or see the following page for more
-      information:
-          http://neovim.io/doc/user/nvim_python.html
+      See ':help provider-python' or this page for more information:
+          http://neovim.io/doc/user/provider.html
 
       If you have any questions, have a look at:
           https://github.com/neovim/neovim/wiki/FAQ.
