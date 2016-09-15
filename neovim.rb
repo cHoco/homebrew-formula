@@ -111,6 +111,12 @@ class Neovim < Formula
   # disable bold text highlight inside terminal buffers
   patch :DATA
 
+  # postpone foldupdate for better performance
+  patch do
+    url "https://gist.github.com/cHoco/2b2c79b09528edb94daa1d12b1d40f83/raw"
+    sha256 "176e5b522c02c105d85501b5942e1ef0d2aa3aa6aed0ffbc98718ecd62de3362"
+  end
+
   # don't redraw tabline when completion popup is open
   patch do
     url "https://gist.githubusercontent.com/cHoco/facbfbf7b4912a5eb512102bac6b4c64/raw/4d7f4707093831c32d13da2bcdd4c8d6e83836ac/fix_tabline_redraw.patch"
