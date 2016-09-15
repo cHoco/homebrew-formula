@@ -108,6 +108,10 @@ class Neovim < Formula
   depends_on "gettext"
   depends_on :python => :recommended if OS.mac? and MacOS.version <= :snow_leopard
 
+  # disable bold text highlight inside terminal buffers
+  patch :DATA
+
+  # don't redraw tabline when completion popup is open
   patch do
     url "https://gist.githubusercontent.com/cHoco/facbfbf7b4912a5eb512102bac6b4c64/raw/4d7f4707093831c32d13da2bcdd4c8d6e83836ac/fix_tabline_redraw.patch"
     sha256 "23f2416ca056b206fc17cc6ca027a1969217464d42e3b118f6c2310bf6321bd6"
@@ -182,3 +186,18 @@ class Neovim < Formula
     assert_equal "Hello World from Neovim!!", File.read("test.txt").strip
   end
 end
+
+__END__
+diff --git a/src/nvim/terminal.c b/src/nvim/terminal.c
+index 6f35cdc..5d3f38d 100644
+--- a/src/nvim/terminal.c
++++ b/src/nvim/terminal.c
+@@ -271,7 +271,7 @@ Terminal *terminal_open(TerminalOptions opts)
+     return rv;
+   }
+ 
+-  vterm_state_set_bold_highbright(state, true);
++  vterm_state_set_bold_highbright(state, false);
+ 
+   // Configure the color palette. Try to get the color from:
+   //
