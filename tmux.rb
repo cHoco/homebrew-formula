@@ -1,32 +1,15 @@
 class Tmux < Formula
   desc "Terminal multiplexer"
   homepage "https://tmux.github.io/"
-
-  stable do
-    url "https://github.com/tmux/tmux/releases/download/2.1/tmux-2.1.tar.gz"
-    sha256 "31564e7bf4bcef2defb3cb34b9e596bd43a3937cad9e5438701a81a5a9af6176"
-
-    patch do
-      # This fixes the Tmux 2.1 update that broke the ability to use select-pane [-LDUR]
-      # to switch panes when in a maximized pane https://github.com/tmux/tmux/issues/150#issuecomment-149466158
-      url "https://github.com/tmux/tmux/commit/a05c27a7e1c4d43709817d6746a510f16c960b4b.diff"
-      sha256 "2a60a63f0477f2e3056d9f76207d4ed905de8a9ce0645de6c29cf3f445bace12"
-    end
-
-    patch do
-      # This fixes the Tmux 2.1 update that breaks "tmux killw\; detach"
-      # https://github.com/tmux/tmux/issues/153#issuecomment-150184957
-      url "https://github.com/tmux/tmux/commit/3ebcf25149d75977ea97e9d4f786e0508d1a0d5e.diff"
-      sha256 "65a8bc0b2f6a8b41ad27605fd99419fff36314499969adc9d17dd3940a173508"
-    end
-  end
+  url "https://github.com/tmux/tmux/releases/download/2.3/tmux-2.3.tar.gz"
+  sha256 "55313e132f0f42de7e020bf6323a1939ee02ab79c48634aa07475db41573852b"
+  revision 1
 
   bottle do
     cellar :any
-    revision 2
-    sha256 "815920cd38a8102360f7d667271d9c724f41087dd79be433db29259390ef8011" => :el_capitan
-    sha256 "93e2156c3c7e1c9f3f4b86dd84617e7519e9bee630f1e8769e00a91aa341d274" => :yosemite
-    sha256 "03c4ca001f72a1623393c0ec9406dfd82b7e449d745762a6e761da6a95d0fbd9" => :mavericks
+    sha256 "24d9dbda94c0aa1234789f25f492768b49c67563642233a5d2abbb51fd4e3ad2" => :sierra
+    sha256 "417d94c03e60ff396e02a6d6b56ff9be96f0b22127afaa3732ff26d86ed769e3" => :el_capitan
+    sha256 "5dbd3539dda1ce33a19dbc9813d005a88d4bef2977af7f40903aae4d9efc5d0c" => :yosemite
   end
 
   head do
@@ -35,38 +18,34 @@ class Tmux < Formula
     depends_on "autoconf" => :build
     depends_on "automake" => :build
     depends_on "libtool" => :build
-    depends_on "utf8proc"
-
     patch do
-      # This patch replaces wcwidth system function call to use utf8proc wcwidth
-      # since OS X wcwidth implementation is broken
-      url "https://gist.github.com/cHoco/d727e3f31a186597bb2626f8e012072c/raw"
-      sha256 "a336b069583f9e87d4e43f8a32a875349f63fd80e8a715aa82a235516dcfff00"
+      url "https://gist.githubusercontent.com/choco/a2bb719376f317f2ee7ce03a699beaf1/raw/611be3e0d22bdeaba2c1f04fc3f1d0e5850dfefb/symbols_force_width_1.patch"
+      sha256 "a5ef97b22ac9f1556f5d33a947a36acdb36b63ca95743fa66ff8a2856438ac5a"
     end
   end
 
   depends_on "pkg-config" => :build
   depends_on "libevent"
+  depends_on "utf8proc"
+
+  resource "completion" do
+    url "https://raw.githubusercontent.com/imomaliev/tmux-bash-completion/homebrew_1.0.0/completions/tmux"
+    sha256 "05e79fc1ecb27637dc9d6a52c315b8f207cf010cdcee9928805525076c9020ae"
+  end
 
   def install
     system "sh", "autogen.sh" if build.head?
 
     ENV.append "LDFLAGS", "-lresolv"
-    if build.head?
-      ENV.append "LDFLAGS", "-lutf8proc"
-    end
     system "./configure", "--disable-dependency-tracking",
                           "--prefix=#{prefix}",
-                          "--sysconfdir=#{etc}"
+                          "--sysconfdir=#{etc}",
+                          "--enable-utf8proc"
 
     system "make", "install"
 
-    if build.head?
-      pkgshare.install "example_tmux.conf"
-    else
-      bash_completion.install "examples/bash_completion_tmux.sh" => "tmux"
-      pkgshare.install "examples"
-    end
+    pkgshare.install "example_tmux.conf"
+    bash_completion.install resource("completion")
   end
 
   def caveats; <<-EOS.undent
