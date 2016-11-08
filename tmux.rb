@@ -18,15 +18,10 @@ class Tmux < Formula
     depends_on "autoconf" => :build
     depends_on "automake" => :build
     depends_on "libtool" => :build
-    patch do
-      url "https://gist.githubusercontent.com/choco/a2bb719376f317f2ee7ce03a699beaf1/raw/611be3e0d22bdeaba2c1f04fc3f1d0e5850dfefb/symbols_force_width_1.patch"
-      sha256 "a5ef97b22ac9f1556f5d33a947a36acdb36b63ca95743fa66ff8a2856438ac5a"
-    end
   end
 
   depends_on "pkg-config" => :build
   depends_on "libevent"
-  depends_on "utf8proc"
 
   resource "completion" do
     url "https://raw.githubusercontent.com/imomaliev/tmux-bash-completion/homebrew_1.0.0/completions/tmux"
@@ -39,8 +34,7 @@ class Tmux < Formula
     ENV.append "LDFLAGS", "-lresolv"
     system "./configure", "--disable-dependency-tracking",
                           "--prefix=#{prefix}",
-                          "--sysconfdir=#{etc}",
-                          "--enable-utf8proc"
+                          "--sysconfdir=#{etc}"
 
     system "make", "install"
 
