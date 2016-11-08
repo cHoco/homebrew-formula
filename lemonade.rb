@@ -29,7 +29,7 @@ class Lemonade < Formula
       :revision => "08fbe355c365aec69944099014aec26b357eb4f6"
   end
 
-  go_resource "github.com/skratchdot/open-golang/open" do
+  go_resource "github.com/skratchdot/open-golang" do
     url "https://github.com/skratchdot/open-golang.git",
       :revision => "75fb7ed4208cf72d323d7d02fd1a5964a7a9073c"
   end
@@ -49,16 +49,13 @@ class Lemonade < Formula
     ENV["GOARCH"] = MacOS.prefer_64_bit? ? "amd64" : "386"
     ENV["GOPATH"] = buildpath
 
-    base_flag = "-X github.com/pocke/lemonade/lemon"
-    ldflags = %W[
-      #{base_flag}.Version=v#{version}
-    ]
-
+    ldflags = "-X github.com/pocke/lemonade/lemon.Version=v#{version}"
     mkdir_p buildpath/"src/github.com/pocke/"
     ln_s buildpath, buildpath/"src/github.com/pocke/lemonade"
-    Language::Go.stage_deps resources, buildpath/"src"
 
-    system "go", "build", "-ldflags", ldflags
+    Language::Go.stage_deps resources, buildpath/"src"
+    cd "src/github.com/pocke/lemonade" do
+      system "go", "build", "-ldflags", ldflags, "-o", bin/"lemonade"
     end
   end
 end
