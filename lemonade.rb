@@ -10,9 +10,12 @@ class Lemonade < Formula
   def install
     ENV["GOPATH"] = buildpath
 
+    mkdir_p buildpath/"src/github.com/pocke/"
+    ln_sf buildpath, buildpath/"src/github.com/pocke/lemonade"
+
     base_flag = "-X github.com/pocke/lemonade/lemon"
     ldflags = %W[
-      #{base_flag}.Version=#{version}
+      #{base_flag}.Version=v#{version}
     ]
 
     system "go", "build", "-ldflags", ldflags
