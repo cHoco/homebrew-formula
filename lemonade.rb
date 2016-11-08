@@ -34,6 +34,11 @@ class Lemonade < Formula
       :revision => "75fb7ed4208cf72d323d7d02fd1a5964a7a9073c"
   end
 
+  go_resource "github.com/BurntSushi/toml" do
+    url "https://github.com/BurntSushi/toml.git",
+      :revision => "99064174e013895bbd9b025c31100bd1d9b590ca"
+  end
+
   def install
     ENV["GOOS"] = "darwin"
     ENV["GOARCH"] = MacOS.prefer_64_bit? ? "amd64" : "386"
@@ -44,7 +49,7 @@ class Lemonade < Formula
       #{base_flag}.Version=v#{version}
     ]
 
-    (buildpath/"src/github.com/peck/lemonade").install buildpath.children
+    (buildpath/"src/github.com/pocke/lemonade").install buildpath.children
     Language::Go.stage_deps resources, buildpath/"src"
     cd "src/github.com/pocke/lemonade" do
       system "go", "build", "-ldflags", ldflags
