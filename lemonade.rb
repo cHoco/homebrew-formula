@@ -39,6 +39,11 @@ class Lemonade < Formula
       :revision => "99064174e013895bbd9b025c31100bd1d9b590ca"
   end
 
+  go_resource "gopkg.in/yaml.v2" do
+    url "https://gopkg.in/yaml.v2.git",
+    :revision => "a5b47d31c556af34a302ce5d659e6fea44d90de0"
+  end
+
   def install
     ENV["GOOS"] = "darwin"
     ENV["GOARCH"] = MacOS.prefer_64_bit? ? "amd64" : "386"
@@ -49,14 +54,11 @@ class Lemonade < Formula
       #{base_flag}.Version=v#{version}
     ]
 
-    (buildpath/"src/github.com/pocke/lemonade").install buildpath.children
+    mkdir_p buildpath/"src/github.com/pocke/"
+    ln_s buildpath, buildpath/"src/github.com/pocke/lemonade"
     Language::Go.stage_deps resources, buildpath/"src"
-    cd "src/github.com/pocke/lemonade" do
-      system "go", "build", "-ldflags", ldflags
-      bin.install "lemonade"
-    end
 
     system "go", "build", "-ldflags", ldflags
-    bin.install "lemonade"
+    end
   end
 end
