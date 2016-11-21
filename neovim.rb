@@ -3,8 +3,8 @@ class Neovim < Formula
   homepage "https://neovim.io"
 
   stable do
-    url "https://github.com/neovim/neovim/archive/v0.1.5.tar.gz"
-    sha256 "f286ff7994ef1835272285425d65804063f112c91925fee3ef8865282a6d2b7e"
+    url "https://github.com/neovim/neovim/archive/v0.1.6.tar.gz"
+    sha256 "a9fe7aadd38ef015f82ec340f6b6c0629d02c9ca4d85352db0934ae511d2f02a"
 
     # Third-party dependencies for latest release.
     resource "libuv" do
@@ -43,8 +43,8 @@ class Neovim < Formula
     end
 
     resource "jemalloc" do
-      url "https://github.com/jemalloc/jemalloc/releases/download/4.0.2/jemalloc-4.0.2.tar.bz2"
-      sha256 "0d8a9c8a98adb6983e0ccb521d45d9db1656ef3e71d0b14fb333f2c8138f4611"
+      url "https://github.com/jemalloc/jemalloc/releases/download/4.3.1/jemalloc-4.3.1.tar.bz2"
+      sha256 "f7bb183ad8056941791e0f075b802e8ff10bd6e2d904e682f87c8f6a510c278b"
     end
   end
 
@@ -93,12 +93,14 @@ class Neovim < Formula
     end
 
     resource "jemalloc" do
-      url "https://github.com/jemalloc/jemalloc/releases/download/4.0.2/jemalloc-4.0.2.tar.bz2"
-      sha256 "0d8a9c8a98adb6983e0ccb521d45d9db1656ef3e71d0b14fb333f2c8138f4611"
+      url "https://github.com/jemalloc/jemalloc/releases/download/4.3.1/jemalloc-4.3.1.tar.bz2"
+      sha256 "f7bb183ad8056941791e0f075b802e8ff10bd6e2d904e682f87c8f6a510c278b"
     end
   end
 
-  option "with-release", "Compile in release mode"
+  option "with-release", "Compile in Release mode without debug info"
+  option "with-dev", "Compile a Dev build. Enables debug information, logging,
+        and optimizations that don't interfere with debugging."
 
   depends_on "cmake" => :build
   depends_on "libtool" => :build
@@ -113,13 +115,13 @@ class Neovim < Formula
 
   # postpone foldupdate for better performance
   patch do
-    url "https://gist.github.com/cHoco/2b2c79b09528edb94daa1d12b1d40f83/raw"
+    url "https://gist.github.com/choco/2b2c79b09528edb94daa1d12b1d40f83/raw"
     sha256 "176e5b522c02c105d85501b5942e1ef0d2aa3aa6aed0ffbc98718ecd62de3362"
   end
 
   # don't redraw tabline when completion popup is open
   patch do
-    url "https://gist.githubusercontent.com/cHoco/facbfbf7b4912a5eb512102bac6b4c64/raw/4d7f4707093831c32d13da2bcdd4c8d6e83836ac/fix_tabline_redraw.patch"
+    url "https://gist.githubusercontent.com/choco/facbfbf7b4912a5eb512102bac6b4c64/raw/4d7f4707093831c32d13da2bcdd4c8d6e83836ac/fix_tabline_redraw.patch"
     sha256 "23f2416ca056b206fc17cc6ca027a1969217464d42e3b118f6c2310bf6321bd6"
   end
 
@@ -147,7 +149,7 @@ class Neovim < Formula
         if build.with?("release")
           "Release"
         else
-          build.head? ? "Dev" : "RelWithDebInfo"
+          build.with?("dev") ? "Dev" : "RelWithDebInfo"
         end
       cmake_args = std_cmake_args + ["-DDEPS_PREFIX=../deps-build/usr",
                                      "-DCMAKE_BUILD_TYPE=#{build_type}"]
@@ -166,23 +168,18 @@ class Neovim < Formula
   end
 
   def caveats; <<-EOS.undent
-      The Neovim executable is called 'nvim'. To use your existing Vim
-      configuration:
+      To run Neovim, use the "nvim" command (not "neovim"):
+          nvim
+      After installing or upgrading, run the "CheckHealth" command:
+          :CheckHealth
+      To use your existing Vim configuration:
           ln -s ~/.vim ~/.config/nvim
           ln -s ~/.vimrc ~/.config/nvim/init.vim
-      See ':help nvim' for more information on Neovim.
-
-      When upgrading Neovim, check the following page for breaking changes:
+      See ':help nvim' for more information.
+      Breaking changes (if any) are documented at:
           https://github.com/neovim/neovim/wiki/Following-HEAD
-
-      If you want support for Python plugins such as YouCompleteMe, you need
-      to install a Python module in addition to Neovim itself.
-
-      See ':help provider-python' or this page for more information:
-          http://neovim.io/doc/user/provider.html
-
-      If you have any questions, have a look at:
-          https://github.com/neovim/neovim/wiki/FAQ.
+      For other questions:
+          https://github.com/neovim/neovim/wiki/FAQ
     EOS
   end
 
