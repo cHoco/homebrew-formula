@@ -88,6 +88,7 @@ class Neovim < Formula
       cmake_args += ["-DENABLE_JEMALLOC=OFF"] if build.without?("jemalloc")
 
       if OS.mac?
+        cmake_args += ["-DJEMALLOC_LIBRARY=#{Formula["jemalloc"].opt_lib}/libjemalloc.a"] if build.with?("jemalloc")
         cmake_args += ["-DIconv_INCLUDE_DIRS:PATH=/usr/include",
                        "-DIconv_LIBRARIES:PATH=/usr/lib/libiconv.dylib"]
       end
