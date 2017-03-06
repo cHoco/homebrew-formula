@@ -53,9 +53,9 @@ class Neovim < Formula
     sha256 "23f2416ca056b206fc17cc6ca027a1969217464d42e3b118f6c2310bf6321bd6"
   end
 
-  patch do 
-    url "https://patch-diff.githubusercontent.com/raw/neovim/neovim/pull/6208.patch"
-    sha256 "7668bfd83790a7947df760c7eba91c9dc94039bb4a8a170eda2d695a3cce0e67"
+  patch do
+    url "https://gist.githubusercontent.com/choco/1f05ee2538043fb6f61671c2f1fbc7f5/raw/3c41985c1b2444d1d46c00115f3d1660b4e249ad/disable_fold.patch"
+    sha256 "684f175fa5211f207ebb882bc0dd7f96074903cb27616bdbb66ab20f817c543d"
   end
 
   def install
