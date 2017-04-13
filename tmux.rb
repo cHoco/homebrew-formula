@@ -20,8 +20,8 @@ class Tmux < Formula
     depends_on "libtool" => :build
 
     patch do
-      url "https://gist.github.com/choco/30500607581f6820d458b4d0cb28f7cc/raw"
-      sha256 "77acc66430f149d179a8a213af5ba8e74210f57750a508f5638dfea852a4011b"
+      url "https://gist.github.com/choco/1f9adeb42e6463ad8b2b7e7ff0ddc27b/raw"
+      sha256 "d553a3a8fefafe2d5b639530a2e46cf62b860a80f04a772c6ea38fc6b77366c1"
     end
   end
 
