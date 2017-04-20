@@ -23,6 +23,11 @@ class Tmux < Formula
       url "https://gist.github.com/choco/1f9adeb42e6463ad8b2b7e7ff0ddc27b/raw"
       sha256 "d553a3a8fefafe2d5b639530a2e46cf62b860a80f04a772c6ea38fc6b77366c1"
     end
+
+    patch do
+      url "https://gist.github.com/choco/78b9af90b8992a8bda212e0aa28601f6/raw"
+      sha256 "431e83744d627f9f45522696718fc71f29e1d0e9c9ce296de594e7db52f41221"
+    end
   end
 
   depends_on "pkg-config" => :build
