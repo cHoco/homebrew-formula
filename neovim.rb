@@ -21,6 +21,8 @@ class Neovim < Formula
   depends_on "libtermkey"
   depends_on "libvterm"
   depends_on "gettext"
+  depends_on "gperf" => :recommended if OS.linux?
+  depends_on "unzip" => :recommended if OS.linux?
   depends_on :python => :recommended if OS.mac? and MacOS.version <= :snow_leopard
 
   resource "luv" do
@@ -45,6 +47,12 @@ class Neovim < Formula
   patch do
     url "https://gist.githubusercontent.com/choco/facbfbf7b4912a5eb512102bac6b4c64/raw/4d7f4707093831c32d13da2bcdd4c8d6e83836ac/fix_tabline_redraw.patch"
     sha256 "23f2416ca056b206fc17cc6ca027a1969217464d42e3b118f6c2310bf6321bd6"
+  end
+
+  # fix resize by disabling lazy redraw on ui resize event
+  patch do
+    url "https://gist.github.com/choco/e8fe4307c4565d051154745117225185/raw"
+    sha256 "638e4e24d5b602a8b4f9c1d497e68fd2b6c42c7774e7b3da2468089f6816881d"
   end
 
   def install
@@ -83,6 +91,7 @@ class Neovim < Formula
 
       if OS.mac?
         cmake_args += ["-DJEMALLOC_LIBRARY=#{Formula["jemalloc"].opt_lib}/libjemalloc.a"] if build.with?("jemalloc")
+        cmake_args += ["-DMSGPACK_LIBRARY=#{Formula["msgpack"].opt_lib}/libmsgpackc.2.dylib"]
         cmake_args += ["-DIconv_INCLUDE_DIRS:PATH=/usr/include",
                        "-DIconv_LIBRARIES:PATH=/usr/lib/libiconv.dylib"]
       end
@@ -95,14 +104,16 @@ class Neovim < Formula
   def caveats; <<-EOS.undent
       To run Neovim, use the "nvim" command (not "neovim"):
           nvim
+
       After installing or upgrading, run the "CheckHealth" command:
           :CheckHealth
-      To use your existing Vim configuration:
-          ln -s ~/.vim ~/.config/nvim
-          ln -s ~/.vimrc ~/.config/nvim/init.vim
-      See ':help nvim' for more information.
+
+      See ':help nvim-from-vim' for information about how to use
+      your existing Vim configuration with Neovim.
+
       Breaking changes (if any) are documented at:
           https://github.com/neovim/neovim/wiki/Following-HEAD
+
       For other questions:
           https://github.com/neovim/neovim/wiki/FAQ
     EOS
