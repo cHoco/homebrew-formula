@@ -55,6 +55,11 @@ class Neovim < Formula
     sha256 "638e4e24d5b602a8b4f9c1d497e68fd2b6c42c7774e7b3da2468089f6816881d"
   end
 
+  patch do
+    url "https://gist.githubusercontent.com/choco/de792ec858842ac0c9aa4f5882989783/raw/be8b17bed876b845c6260bcfd00340c869d79c85/more_lazy_redraw.patch"
+    sha256 "69fa16fe57fb62acb84e3e342a602354d643193aae3a83afc95bcf2cdf4b07ae"
+  end
+
   def install
     ENV["HOME"] = buildpath
 
