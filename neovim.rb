@@ -56,8 +56,8 @@ class Neovim < Formula
   end
 
   patch do
-    url "https://gist.githubusercontent.com/choco/de792ec858842ac0c9aa4f5882989783/raw/be8b17bed876b845c6260bcfd00340c869d79c85/more_lazy_redraw.patch"
-    sha256 "69fa16fe57fb62acb84e3e342a602354d643193aae3a83afc95bcf2cdf4b07ae"
+    url "https://gist.github.com/choco/da496de8114291e99f0fbe5e1b78e7d5/raw"
+    sha256 "d8c85ad520c23cd07f4d258916a2b58bdd4ea291aa5ffac38bf156d7079617b2"
   end
 
   def install
