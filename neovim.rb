@@ -1,9 +1,24 @@
 class Neovim < Formula
   desc "Ambitious Vim-fork focused on extensibility and agility"
   homepage "https://neovim.io"
-  url "https://github.com/neovim/neovim/archive/v0.1.7.tar.gz"
-  sha256 "d8f885d019b1ad608f36ae23b8f1b15b7e33585e16f7514666ab6c9809bb4b7e"
-  head "https://github.com/neovim/neovim.git", :shallow => false
+
+  stable do
+    head "https://github.com/neovim/neovim.git", :shallow => false
+    url "https://github.com/neovim/neovim/archive/v0.2.0.tar.gz"
+    sha256 "72e263f9d23fe60403d53a52d4c95026b0be428c1b9c02b80ab55166ea3f62b5"
+    resource "luarocks" do
+      url "https://github.com/luarocks/luarocks/archive/5d8a16526573b36d5b22aa74866120c998466697.tar.gz"
+      sha256 "cae709111c5701235770047dfd7169f66b82ae1c7b9b79207f9df0afb722bfd9"
+    end
+  end
+
+  head do
+    url "https://github.com/neovim/neovim.git", :shallow => false
+    resource "luarocks" do
+      url "https://github.com/luarocks/luarocks/archive/2.4.2.tar.gz"
+      sha256 "eef88c2429c715a7beb921e4b1ba571dddb7c74a250fbb0d3cc0d4be7a5865d9"
+    end
+  end
 
   option "with-release", "Compile in Release mode without debug info"
   option "with-dev", "Compile a Dev build. Enables debug information, logging,
@@ -26,8 +41,9 @@ class Neovim < Formula
   depends_on :python => :recommended if OS.mac? and MacOS.version <= :snow_leopard
 
   resource "luv" do
-    url "https://github.com/luvit/luv/archive/146f1ce4c08c3b67f604c9ee1e124b1cf5c15cf3.tar.gz"
-    sha256 "3d537f8eb9fa5adb146a083eae22af886aee324ec268e2aa0fa75f2f1c52ca7a"
+    version "1.9.1-0"
+    url "https://github.com/luvit/luv/archive/1.9.1-0.tar.gz"
+    sha256 "86a199403856018cd8e5529c8527450c83664a3d36f52d5253cbe909ea6c5a06"
   end
 
   resource "luajit" do
