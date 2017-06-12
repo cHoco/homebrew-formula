@@ -3,7 +3,6 @@ class Neovim < Formula
   homepage "https://neovim.io"
 
   stable do
-    head "https://github.com/neovim/neovim.git", :shallow => false
     url "https://github.com/neovim/neovim/archive/v0.2.0.tar.gz"
     sha256 "72e263f9d23fe60403d53a52d4c95026b0be428c1b9c02b80ab55166ea3f62b5"
     resource "luarocks" do
@@ -13,7 +12,7 @@ class Neovim < Formula
   end
 
   head do
-    url "https://github.com/neovim/neovim.git", :shallow => false
+    url "https://github.com/neovim/neovim.git"
     resource "luarocks" do
       url "https://github.com/luarocks/luarocks/archive/2.4.2.tar.gz"
       sha256 "eef88c2429c715a7beb921e4b1ba571dddb7c74a250fbb0d3cc0d4be7a5865d9"
