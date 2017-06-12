@@ -70,9 +70,16 @@ class Neovim < Formula
     sha256 "638e4e24d5b602a8b4f9c1d497e68fd2b6c42c7774e7b3da2468089f6816881d"
   end
 
+  # better lazy redraw approach, and try to stop cursor from jumping around
   patch do
     url "https://gist.github.com/choco/da496de8114291e99f0fbe5e1b78e7d5/raw"
     sha256 "d8c85ad520c23cd07f4d258916a2b58bdd4ea291aa5ffac38bf156d7079617b2"
+  end
+
+  # TUI miscelaneous improvements
+  patch do
+    url "https://patch-diff.githubusercontent.com/raw/neovim/neovim/pull/6816.patch"
+    sha256 "320f888d092092471389d9f092a743e3d4f8055e67a36d8cf0ddb0f2aa739e3b"
   end
 
   def install
@@ -93,7 +100,7 @@ class Neovim < Formula
         "-DUSE_BUNDLED_LIBVTERM=OFF",
         "-DUSE_BUNDLED_JEMALLOC=OFF",
         "-DUSE_EXISTING_SRC_DIR=ON", *std_cmake_args
-      system "make", "VERBOSE=1"
+      ENV.deparallelize { system "make", "VERBOSE=1" }
     end
 
     mkdir "build" do
