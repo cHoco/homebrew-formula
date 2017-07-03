@@ -103,6 +103,7 @@ class Neovim < Formula
     system bin/"nvim", "--headless", "-i", "NONE", "-u", "NONE",
                        "+s/Vim/Neovim/g", "+wq", "test.txt"
     assert_equal "Hello World from Neovim!!", (testpath/"test.txt").read.chomp
+  end
 end
 
 __END__
