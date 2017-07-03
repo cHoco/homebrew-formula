@@ -5,54 +5,42 @@ class Neovim < Formula
   stable do
     url "https://github.com/neovim/neovim/archive/v0.2.0.tar.gz"
     sha256 "72e263f9d23fe60403d53a52d4c95026b0be428c1b9c02b80ab55166ea3f62b5"
-    resource "luarocks" do
-      url "https://github.com/luarocks/luarocks/archive/5d8a16526573b36d5b22aa74866120c998466697.tar.gz"
-      sha256 "cae709111c5701235770047dfd7169f66b82ae1c7b9b79207f9df0afb722bfd9"
-    end
+
+    depends_on "luajit" => :build
+  end
+
+  bottle do
+    sha256 "b04f8a559f1f17aef15699afb83be2a85b626a81dec72e1b686bcdf916456c01" => :sierra
+    sha256 "5774c42876eeccfae2b242acdbda91f84761b9bb680e663a707b6a15667ff4a9" => :el_capitan
+    sha256 "8a8e12c9082f67366f6bfd4780f262b935d033e5ade1a6ddf9fd6eb9cb9e0eba" => :yosemite
   end
 
   head do
     url "https://github.com/neovim/neovim.git"
-    resource "luarocks" do
-      url "https://github.com/luarocks/luarocks/archive/2.4.2.tar.gz"
-      sha256 "eef88c2429c715a7beb921e4b1ba571dddb7c74a250fbb0d3cc0d4be7a5865d9"
-    end
-  end
 
-  option "with-release", "Compile in Release mode without debug info"
-  option "with-dev", "Compile a Dev build. Enables debug information, logging,
-        and optimizations that don't interfere with debugging."
+    depends_on "luajit"
+  end
 
   depends_on "cmake" => :build
-  depends_on "libtool" => :build
-  depends_on "automake" => :build
-  depends_on "autoconf" => :build
+  depends_on "lua@5.1" => :build
   depends_on "pkg-config" => :build
-  depends_on "jemalloc" => :recommended
+  depends_on "gettext"
+  depends_on "jemalloc"
+  depends_on "libtermkey"
   depends_on "libuv"
+  depends_on "libvterm"
   depends_on "msgpack"
   depends_on "unibilium"
-  depends_on "libtermkey"
-  depends_on "libvterm"
-  depends_on "gettext"
-  depends_on "gperf" => :recommended if OS.linux?
-  depends_on "unzip" => :recommended if OS.linux?
-  depends_on :python => :recommended if OS.mac? and MacOS.version <= :snow_leopard
+  depends_on :python if MacOS.version <= :snow_leopard
 
-  resource "luv" do
-    version "1.9.1-0"
-    url "https://github.com/luvit/luv/archive/1.9.1-0.tar.gz"
-    sha256 "86a199403856018cd8e5529c8527450c83664a3d36f52d5253cbe909ea6c5a06"
+  resource "lpeg" do
+    url "https://luarocks.org/manifests/gvvaughan/lpeg-1.0.1-1.src.rock", :using => :nounzip
+    sha256 "149be31e0155c4694f77ea7264d9b398dd134eca0d00ff03358d91a6cfb2ea9d"
   end
 
-  resource "luajit" do
-    url "https://raw.githubusercontent.com/neovim/deps/master/opt/LuaJIT-2.0.4.tar.gz"
-    sha256 "620fa4eb12375021bef6e4f237cbd2dd5d49e56beb414bee052c746beef1807d"
-  end
-
-  resource "luarocks" do
-    url "https://github.com/keplerproject/luarocks/archive/5d8a16526573b36d5b22aa74866120c998466697.tar.gz"
-    sha256 "cae709111c5701235770047dfd7169f66b82ae1c7b9b79207f9df0afb722bfd9"
+  resource "mpack" do
+    url "https://luarocks.org/manifests/tarruda/mpack-1.0.6-0.src.rock", :using => :nounzip
+    sha256 "9068d9d3f407c72a7ea18bc270b0fa90aad60a2f3099fa23d5902dd71ea4cd5f"
   end
 
   # disable bold text highlight inside terminal buffers
@@ -83,74 +71,38 @@ class Neovim < Formula
   end
 
   def install
-    ENV["HOME"] = buildpath
-
     resources.each do |r|
       r.stage(buildpath/"deps-build/build/src/#{r.name}")
     end
 
+    ENV.prepend_path "LUA_PATH", "#{buildpath}/deps-build/share/lua/5.1/?.lua"
+    ENV.prepend_path "LUA_CPATH", "#{buildpath}/deps-build/lib/lua/5.1/?.so"
+
     cd "deps-build" do
-      ohai "Building third-party dependencies."
-      system "cmake", "../third-party", "-DUSE_BUNDLED_BUSTED=OFF",
-        "-DUSE_BUNDLED_GPERF=OFF",
-        "-DUSE_BUNDLED_LIBUV=OFF",
-        "-DUSE_BUNDLED_MSGPACK=OFF",
-        "-DUSE_BUNDLED_UNIBILIUM=OFF",
-        "-DUSE_BUNDLED_LIBTERMKEY=OFF",
-        "-DUSE_BUNDLED_LIBVTERM=OFF",
-        "-DUSE_BUNDLED_JEMALLOC=OFF",
-        "-DUSE_EXISTING_SRC_DIR=ON", *std_cmake_args
-      ENV.deparallelize { system "make", "VERBOSE=1" }
+      system "luarocks-5.1", "build", "build/src/lpeg/lpeg-1.0.1-1.src.rock", "--tree=."
+      system "luarocks-5.1", "build", "build/src/mpack/mpack-1.0.6-0.src.rock", "--tree=."
+      system "cmake", "../third-party", "-DUSE_BUNDLED=OFF", *std_cmake_args
+      system "make"
+    end
+
+    cd "deps-build" do
+      system "luarocks-5.1", "build", "build/src/lpeg/lpeg-1.0.1-1.src.rock", "--tree=."
+      system "luarocks-5.1", "build", "build/src/mpack/mpack-1.0.6-0.src.rock", "--tree=."
+      system "cmake", "../third-party", "-DUSE_BUNDLED=OFF", *std_cmake_args
+      system "make"
     end
 
     mkdir "build" do
-      ohai "Building Neovim."
-
-      build_type =
-        if build.with?("release")
-          "Release"
-        else
-          build.with?("dev") ? "Dev" : "RelWithDebInfo"
-        end
-      cmake_args = std_cmake_args + ["-DDEPS_PREFIX=../deps-build/usr",
-                                     "-DCMAKE_BUILD_TYPE=#{build_type}"]
-      cmake_args += ["-DENABLE_JEMALLOC=OFF"] if build.without?("jemalloc")
-
-      if OS.mac?
-        cmake_args += ["-DJEMALLOC_LIBRARY=#{Formula["jemalloc"].opt_lib}/libjemalloc.a"] if build.with?("jemalloc")
-        cmake_args += ["-DMSGPACK_LIBRARY=#{Formula["msgpack"].opt_lib}/libmsgpackc.2.dylib"]
-        cmake_args += ["-DIconv_INCLUDE_DIRS:PATH=/usr/include",
-                       "-DIconv_LIBRARIES:PATH=/usr/lib/libiconv.dylib"]
-      end
-
-      system "cmake", "..", *cmake_args
-      system "make", "VERBOSE=1", "install"
+      system "cmake", "..", *std_cmake_args
+      system "make", "install"
     end
-  end
-
-  def caveats; <<-EOS.undent
-      To run Neovim, use the "nvim" command (not "neovim"):
-          nvim
-
-      After installing or upgrading, run the "CheckHealth" command:
-          :CheckHealth
-
-      See ':help nvim-from-vim' for information about how to use
-      your existing Vim configuration with Neovim.
-
-      Breaking changes (if any) are documented at:
-          https://github.com/neovim/neovim/wiki/Following-HEAD
-
-      For other questions:
-          https://github.com/neovim/neovim/wiki/FAQ
-    EOS
   end
 
   test do
     (testpath/"test.txt").write("Hello World from Vim!!")
-    system bin/"nvim", "--headless", "-i", "NONE", "-u", "NONE", "+s/Vim/Neovim/g", "+wq", "test.txt"
-    assert_equal "Hello World from Neovim!!", File.read("test.txt").strip
-  end
+    system bin/"nvim", "--headless", "-i", "NONE", "-u", "NONE",
+                       "+s/Vim/Neovim/g", "+wq", "test.txt"
+    assert_equal "Hello World from Neovim!!", (testpath/"test.txt").read.chomp
 end
 
 __END__
