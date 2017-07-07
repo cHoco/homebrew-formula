@@ -64,12 +64,6 @@ class Neovim < Formula
     sha256 "d8c85ad520c23cd07f4d258916a2b58bdd4ea291aa5ffac38bf156d7079617b2"
   end
 
-  # TUI miscelaneous improvements
-  patch do
-    url "https://patch-diff.githubusercontent.com/raw/neovim/neovim/pull/6816.patch"
-    sha256 "320f888d092092471389d9f092a743e3d4f8055e67a36d8cf0ddb0f2aa739e3b"
-  end
-
   def install
     resources.each do |r|
       r.stage(buildpath/"deps-build/build/src/#{r.name}")
