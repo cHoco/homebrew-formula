@@ -52,12 +52,6 @@ class Neovim < Formula
     sha256 "23f2416ca056b206fc17cc6ca027a1969217464d42e3b118f6c2310bf6321bd6"
   end
 
-  # fix resize by disabling lazy redraw on ui resize event
-  patch do
-    url "https://gist.github.com/choco/e8fe4307c4565d051154745117225185/raw"
-    sha256 "638e4e24d5b602a8b4f9c1d497e68fd2b6c42c7774e7b3da2468089f6816881d"
-  end
-
   # better lazy redraw approach, and try to stop cursor from jumping around
   patch do
     url "https://gist.github.com/choco/da496de8114291e99f0fbe5e1b78e7d5/raw"
