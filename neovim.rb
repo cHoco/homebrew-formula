@@ -52,12 +52,6 @@ class Neovim < Formula
     sha256 "23f2416ca056b206fc17cc6ca027a1969217464d42e3b118f6c2310bf6321bd6"
   end
 
-  # better lazy redraw approach, and try to stop cursor from jumping around
-  patch do
-    url "https://gist.github.com/choco/da496de8114291e99f0fbe5e1b78e7d5/raw"
-    sha256 "d8c85ad520c23cd07f4d258916a2b58bdd4ea291aa5ffac38bf156d7079617b2"
-  end
-
   def install
     resources.each do |r|
       r.stage(buildpath/"deps-build/build/src/#{r.name}")
